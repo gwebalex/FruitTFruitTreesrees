@@ -91,5 +91,4 @@ public class FirebaseWorker {
 
         rootRef.child(treeName).updateChildren(updMap);
     }
-
 }

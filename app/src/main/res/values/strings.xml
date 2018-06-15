@@ -12,7 +12,8 @@
     <!-- Share Dialog -->
     <string name="dialog_share_title">Поделиться через</string>
 
-
     <!-- Menu -->
     <string name="menu_frag_list_search_title">Поиск</string>
+    <string name="menu_frag_list_search_hint">Введите название дерева</string>
+
 </resources>

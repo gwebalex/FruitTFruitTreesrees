@@ -1,5 +1,7 @@
 package com.prospektdev.trainee_dovhaliuk.list;
 
+import android.app.SearchManager;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -8,10 +10,14 @@ import android.support.v7.util.DiffUtil;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ProgressBar;
+import android.widget.SearchView;
 import android.widget.TextView;
 
 import com.arellomobile.mvp.MvpFragment;
@@ -24,6 +30,7 @@ import com.prospektdev.trainee_dovhaliuk.R;
 import com.prospektdev.trainee_dovhaliuk.database.room.RModelTree;
 import com.prospektdev.trainee_dovhaliuk.desc.DescFrag;
 import com.prospektdev.trainee_dovhaliuk.utils.AppClass;
+import com.prospektdev.trainee_dovhaliuk.utils.AppLogs;
 import com.prospektdev.trainee_dovhaliuk.utils.manager.InternetConnection;
 
 import java.util.List;
@@ -32,9 +39,10 @@ import java.util.List;
  * @author Oleksandr Dovhaliuk
  */
 
-public class ListFrag extends MvpFragment implements IListFrag {
+public class ListFrag extends MvpFragment implements IListFrag, IListFragRVAdapterListener {
 
-    // [START Class Fields]
+
+// [START Class Fields]
     private ProgressBar progressBar;
     private TextView tvEmptyDb;
     private Button btnRetry;
@@ -49,6 +57,12 @@ public class ListFrag extends MvpFragment implements IListFrag {
 
     // [START Class Callbacks]
     // [START Android UI Callbacks]
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
@@ -111,6 +125,61 @@ public class ListFrag extends MvpFragment implements IListFrag {
         int rcPosition = rcVLLManager.findLastCompletelyVisibleItemPosition();
         listFragPresenter.saveRecyclerScrollPosition(rcPosition);
     }
+
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_frag_list_search, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+
+        // Associate searchable configuration with the SearchView
+        SearchManager searchManager = (SearchManager) getActivity().getSystemService(Context.SEARCH_SERVICE);
+        SearchView searchView = (SearchView) menu.findItem(R.id.menu_frag_list_search_item).getActionView();
+        if (searchManager != null) {
+            searchView.setSearchableInfo(searchManager.getSearchableInfo(getActivity().getComponentName()));
+        }
+        searchView.setMaxWidth(Integer.MAX_VALUE);
+
+        // listening to search query text change
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                // filter recycler view when query submitted
+                adapter.getFilter().filter(query);
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String query) {
+                // filter recycler view when text is changed
+                adapter.getFilter().filter(query);
+                return false;
+            }
+        });
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        // noinspection SimplifiableIfStatement
+        if (id == R.id.menu_frag_list_search_item) {
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    public void onTreeSelected(RModelTree tree) {
+        AppLogs.show("tree name " + tree.getTreeName());
+        IFragmentSwitch fragmentSwitch = (IFragmentSwitch) getActivity();
+        DescFrag descFrag = new DescFrag();
+        Bundle treeObject = new Bundle();
+        treeObject.putString(MainActivity.BUNDLE_TREE_OBJECT_TAG, new Gson().toJson(tree));
+        descFrag.setArguments(treeObject);
+
+        fragmentSwitch.onFragmentSwitch(descFrag, MainActivity.FRAG_DESC_TAG);
+    }
     // [END Android UI Callbacks]
 
 
@@ -152,7 +221,7 @@ public class ListFrag extends MvpFragment implements IListFrag {
     // [START RecyclerView Loading Callbacks]
     @Override
     public void showRecycler(List<RModelTree> treeList) {
-        adapter = new ListFragRVAdapter(AppClass.getAppContext(), treeList, iOnButtonClickListener);
+        adapter = new ListFragRVAdapter(AppClass.getAppContext(), treeList, this, iOnButtonClickListener);
         rcViewList.setAdapter(adapter);
     }
 

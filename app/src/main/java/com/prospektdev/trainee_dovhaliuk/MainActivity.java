@@ -3,20 +3,26 @@ package com.prospektdev.trainee_dovhaliuk;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
-import android.support.v7.app.AppCompatActivity;
+import android.content.Context;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.MenuItem;
+import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 
 import com.prospektdev.trainee_dovhaliuk.list.ListFrag;
-import com.prospektdev.trainee_dovhaliuk.utils.AppLogs;
 
-public class MainActivity extends AppCompatActivity implements IFragmentSwitch, IToolbar {
+public class MainActivity extends AppCompatActivity
+        implements IFragmentSwitch, IToolbar {
 
+    // [START Class Fields]
     public static final String BUNDLE_TREE_OBJECT_TAG = "treeObject";
     public static final String FRAG_LIST_TAG = "listFrag";
     public static final String FRAG_DESC_TAG = "aboutFrag";
+    // [END Class Fields]
 
+
+    // [START Class Callbacks]
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -26,33 +32,20 @@ public class MainActivity extends AppCompatActivity implements IFragmentSwitch, 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        // show new List Fragment if onCreate called not by device rotation
         if (savedInstanceState == null) {
             onFragmentSwitch(new ListFrag(), FRAG_LIST_TAG);
         }
     }
 
-//    @Override
-//    protected void onResume() {
-//        super.onResume();
-//        if (getSupportActionBar() != null && getFragmentManager().getBackStackEntryCount() > 0) {
-//            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-//        }
-//    }
-
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                AppLogs.show("BackStackEntryCount: " + getFragmentManager().getBackStackEntryCount());
-                if (getSupportActionBar() != null && getFragmentManager().getBackStackEntryCount() > 0) {
-                    onBackPressed();
-                } else {
-                    getSupportActionBar().setDisplayHomeAsUpEnabled(false);
-                }
-                break;
+    public void onBackPressed() {
+        // hide keyboard if it was shown
+        if (keyboardIsShowing(getCurrentFocus())) {
+            hideKeyboard(getCurrentFocus());
+        } else {
+            super.onBackPressed();
         }
-
-        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -76,4 +69,31 @@ public class MainActivity extends AppCompatActivity implements IFragmentSwitch, 
             getSupportActionBar().setTitle(title);
         }
     }
+    // [END Class Callbacks]
+
+
+    // [START Class Methods]
+    private static boolean keyboardIsShowing(View view) {
+        if (view == null) {
+            return false;
+        }
+        InputMethodManager inputManager = (InputMethodManager) view.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+        assert inputManager != null;
+        return inputManager.isActive(view);
+    }
+
+    private static void hideKeyboard(View view) {
+        if (view == null) {
+            return;
+        }
+        InputMethodManager imm = (InputMethodManager) view.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+        if (imm != null && !imm.isActive()) {
+            return;
+        }
+        if (imm != null) {
+            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        }
+    }
+    // [END Class Methods]
+
 }

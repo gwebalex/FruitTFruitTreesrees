@@ -14,7 +14,9 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:titleTextColor="@color/toolbar_text_color" />
+            app:titleTextColor="@color/toolbar_text_color" >
+
+        </android.support.v7.widget.Toolbar>
 
     </android.support.design.widget.AppBarLayout>
 
@@ -23,7 +25,6 @@
         android:layout_width="match_parent"
         android:layout_height="2dp"
         android:layout_below="@id/appBarLayout" />
-
 
     <FrameLayout
         android:id="@+id/act_main_container"

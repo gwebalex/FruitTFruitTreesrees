@@ -7,32 +7,42 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Filter;
+import android.widget.Filterable;
 
 import com.bumptech.glide.Glide;
 import com.prospektdev.trainee_dovhaliuk.R;
 import com.prospektdev.trainee_dovhaliuk.database.room.RModelTree;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * @author Oleksandr Dovhaliuk
  */
-class ListFragRVAdapter extends RecyclerView.Adapter<ListFragRVHolder> {
+class ListFragRVAdapter extends RecyclerView.Adapter<ListFragRVHolder> implements Filterable {
 
     // [START Class Fields]
     private static final String IMAGE_SRC_TEXT = "Image source:";
 
     private Context context;
     private List<RModelTree> treeList;
+    private List<RModelTree> treeListFiltered;
+    private IListFragRVAdapterListener listener;
 
     private IOnButtonClickListener iOnButtonClickListener;
     // [END Class Fields]
 
 
     // [START Class Constructor]
-    ListFragRVAdapter(Context context, List<RModelTree> treeList, IOnButtonClickListener iOnButtonClickListener) {
+    ListFragRVAdapter(Context context,
+                      List<RModelTree> treeList,
+                      IListFragRVAdapterListener listener,
+                      IOnButtonClickListener iOnButtonClickListener) {
         this.context = context;
         this.treeList = treeList;
+        this.treeListFiltered = treeList;
+        this.listener = listener;
         this.iOnButtonClickListener = iOnButtonClickListener;
     }
     // [END Class Constructor]
@@ -54,7 +64,7 @@ class ListFragRVAdapter extends RecyclerView.Adapter<ListFragRVHolder> {
             public void onClick(View view) {
                 int adapterPosition = viewHolder.getAdapterPosition();
                 if (adapterPosition != RecyclerView.NO_POSITION) {
-                    itemImageClicked(adapterPosition);
+                    listener.onTreeSelected(treeListFiltered.get(adapterPosition));
                 }
             }
         });
@@ -91,7 +101,7 @@ class ListFragRVAdapter extends RecyclerView.Adapter<ListFragRVHolder> {
     @Override
     public void onBindViewHolder(@NonNull ListFragRVHolder holder, int position) {
         // get tree for current position
-        RModelTree tree = treeList.get(position);
+        RModelTree tree = treeListFiltered.get(position);
 
         // get Item Name
         String itemName = tree.getTreeName();
@@ -117,28 +127,62 @@ class ListFragRVAdapter extends RecyclerView.Adapter<ListFragRVHolder> {
 
     @Override
     public int getItemCount() {
-        return treeList.size();
+        return treeListFiltered.size();
+    }
+
+    @Override
+    public Filter getFilter() {
+        return new Filter() {
+            @Override
+            protected FilterResults performFiltering(CharSequence charSequence) {
+                String charString = charSequence.toString();
+                if (charString.isEmpty()) {
+                    treeListFiltered = treeList;
+                } else {
+                    List<RModelTree> filteredList = new ArrayList<>();
+                    for (RModelTree tree : treeList) {
+
+                        if (tree.getTreeName().toLowerCase().contains(charString.toLowerCase())) {
+                            filteredList.add(tree);
+                        }
+                    }
+
+                    treeListFiltered = filteredList;
+                }
+
+                FilterResults filterResults = new FilterResults();
+                filterResults.values = treeListFiltered;
+                return filterResults;
+            }
+
+            @Override
+            protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
+                treeListFiltered = (ArrayList<RModelTree>) filterResults.values;
+                notifyDataSetChanged();
+            }
+        };
     }
     // [END Class Callbacks]
 
 
     // [START Class Methods]
     public void setData(List<RModelTree> trees) {
-        this.treeList = trees;
+        this.treeListFiltered = trees;
     }
 
     public List<RModelTree> getData() {
-        return treeList;
+        return treeListFiltered;
     }
 
+    @Deprecated
     private void itemImageClicked(int position) {
-        RModelTree tree = treeList.get(position);
+        RModelTree tree = treeListFiltered.get(position);
         iOnButtonClickListener.onImageClicked(tree);
     }
 
     private void itemLikeClicked(int position) {
         // get tree for current position
-        RModelTree tree = treeList.get(position);
+        RModelTree tree = treeListFiltered.get(position);
 
         String treeName = tree.getTreeName();
         boolean inverseLike = !tree.isTreeLike();
@@ -148,7 +192,7 @@ class ListFragRVAdapter extends RecyclerView.Adapter<ListFragRVHolder> {
 
     private void itemShareClicker(int position) {
         // get tree for current position
-        RModelTree tree = treeList.get(position);
+        RModelTree tree = treeListFiltered.get(position);
 
         String imageName = tree.getTreeName();
         String imageDesc = tree.getTreeDesc();

@@ -31,6 +31,7 @@ public interface RModelTreeDAO {
     @Query("SELECT * FROM rmodeltree")
     List<RModelTree> getAllTree();
 
+    // For future use
     @Query("SELECT * FROM rmodeltree WHERE treeName LIKE :search")
     List<RModelTree> getAllTreeWithTreeName(String search); // search = "%myquery%";
 }
