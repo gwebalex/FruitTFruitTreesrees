@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Activity Container -->
+    <dimen name="act_container_padding_left_right">4dp</dimen>
+
+    <!-- ListFrag -->
+    <dimen name="model_frag_list_rv_item_cv_elevation">4dp</dimen>
+    <dimen name="model_frag_list_rv_item_cv_corner_radius">4dp</dimen>
+    <dimen name="model_frag_list_rv_item_imgv_height">192dp</dimen>
+    <dimen name="model_frag_list_rv_item_divider_view_height">1dp</dimen>
+    <dimen name="model_frag_list_rv_item_tv_padding_left_right">8dp</dimen>
+    <dimen name="model_frag_list_rv_item_btn_dimensions">32dp</dimen>
+
+
+    <!-- Font Size -->
+    <dimen name="font_size_small">12sp</dimen>
+    <dimen name="font_size_medium">16sp</dimen>
+    <dimen name="font_size_large">20sp</dimen>
+
+</resources>

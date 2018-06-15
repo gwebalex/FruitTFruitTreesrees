@@ -1,0 +1,51 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 1,
+    "identityHash": "aa62124b550565d007469164a6f91fa7",
+    "entities": [
+      {
+        "tableName": "RModelTree",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`treeName` TEXT NOT NULL, `treeDesc` TEXT, `treeLike` INTEGER NOT NULL, `treeImgUrl` TEXT, PRIMARY KEY(`treeName`))",
+        "fields": [
+          {
+            "fieldPath": "treeName",
+            "columnName": "treeName",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "treeDesc",
+            "columnName": "treeDesc",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "treeLike",
+            "columnName": "treeLike",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "treeImgUrl",
+            "columnName": "treeImgUrl",
+            "affinity": "TEXT",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "treeName"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [],
+        "foreignKeys": []
+      }
+    ],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"aa62124b550565d007469164a6f91fa7\")"
+    ]
+  }
+}

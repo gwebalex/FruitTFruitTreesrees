@@ -1,0 +1,18 @@
+<resources>
+    <string name="app_name">Trainee project</string>
+
+    <!-- Fragment -->
+    <string name="frag_list_rv_item_image_description">Фото дерева или ветки с плодами</string>
+    <string name="frag_list_rv_item_image_btn_like_description">Кнопка нравится</string>
+    <string name="frag_list_rv_item_image_btn_share_description">Кнопка поделиться</string>
+    <string name="frag_list_tv_empty_database_text">Ваша база данных пуста.\nПодключитесь к сети Интернет и попробуйте загрузить данные снова</string>
+    <string name="frag_list_btn_retry_text">Повторить</string>
+    <string name="frag_list_no_internet_connection">Нет доступа в сеть Интернет</string>
+
+    <!-- Share Dialog -->
+    <string name="dialog_share_title">Поделиться через</string>
+
+
+    <!-- Menu -->
+    <string name="menu_frag_list_search_title">Поиск</string>
+</resources>

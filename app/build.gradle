@@ -1,0 +1,92 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 27
+    defaultConfig {
+        applicationId "com.prospektdev.trainee_dovhaliuk"
+        minSdkVersion 16
+        targetSdkVersion 27
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        // Room json scheme generator
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments = ["room.schemaLocation": "$projectDir/schemas".toString()]
+            }
+        }
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+ext {
+    // Google Libs
+    androidSupport = '27.1.1'
+    androidConstraint = '1.1.2'
+    firebaseCore = '16.0.0'
+    firebaseRTDatabse = '16.0.1'
+
+    // Addition Libs
+    leakcanary = '1.5.4'
+    retrofit = '2.4.0'
+    okHTTP = '3.10.0'
+    moxy = '1.5.3'
+    glide = '4.7.1'
+    room = '1.1.0'
+}
+
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+
+    // [START Google Libs Dependencies]
+    // com.android.SUPPORT:
+    implementation "com.android.support:design:$androidSupport"
+    implementation "com.android.support:appcompat-v7:$androidSupport"
+    implementation "com.android.support:cardview-v7:$androidSupport"
+
+    // com.android.SUPPORT.***:
+    implementation "com.android.support.constraint:constraint-layout:$androidConstraint"
+
+    // com.google.FIREBASE:
+    implementation "com.google.firebase:firebase-core:$firebaseCore"
+    implementation "com.google.firebase:firebase-database:$firebaseRTDatabse"
+    // [END Google Libs Dependencies]
+
+    // [START Addition Libs Dependencies]
+    // com.SQUAREUP.***:
+    // Leakcanary
+    debugImplementation "com.squareup.leakcanary:leakcanary-android:$leakcanary"
+    releaseImplementation "com.squareup.leakcanary:leakcanary-android-no-op:$leakcanary"
+    // Retrofit2
+    implementation "com.squareup.retrofit2:retrofit:$retrofit"
+    implementation "com.squareup.retrofit2:converter-gson:$retrofit"
+    // OkHTTP
+    implementation "com.squareup.okhttp3:logging-interceptor:$okHTTP"
+
+    // MOXY
+    implementation "com.arello-mobile:moxy-android:$moxy"
+    annotationProcessor "com.arello-mobile:moxy-compiler:$moxy"
+
+    // GLIDE
+    implementation "com.github.bumptech.glide:glide:$glide"
+    annotationProcessor "com.github.bumptech.glide:compiler:$glide"
+
+    // ROOM
+    implementation "android.arch.persistence.room:runtime:$room"
+    annotationProcessor "android.arch.persistence.room:compiler:$room"
+    androidTestImplementation "android.arch.persistence.room:testing:$room"
+    // [END Addition Libs Dependencies]
+
+    // TESTS
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'com.android.support.test:runner:1.0.2'
+    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+}
+
+apply plugin: 'com.google.gms.google-services'
